@@ -377,7 +377,15 @@ PrefabInstance:
     - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
       propertyPath: element
       value: 
-      objectReference: {fileID: 1019472270226966421, guid: 7ad6a6de12982ef4a8d14d6cf87c5f91, type: 3}
+      objectReference: {fileID: 2229671308430428633, guid: f09dd27e2e119f748b629afc4ea1c91c, type: 3}
+    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
+      propertyPath: gridRows
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
+      propertyPath: gridColumns
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8701573119208444842, guid: 11a1828a963d80240a983290019e3890, type: 3}
       propertyPath: m_Name
       value: GridBuilder

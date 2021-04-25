@@ -6,40 +6,44 @@ namespace Grid
 {
     public class GridCreator : MonoBehaviour
     {
-        private const int LEFT = -1;
+        private const int LEFT = 1;
         private const int TOP = 1;
 
         public static UnityGridWorldEvent GridCreated = new UnityGridWorldEvent();
 
         [SerializeField] private GameObject element;
+        [SerializeField] private int gridRows;
+        [SerializeField] private int gridColumns;
 
         public GridWorldSize worldSize;
 
-        private Vector3 extents;
+        //private Vector3 extents;
         private Vector3 size;
 
-        public T[,] CreateGrid<T>(int rows, int columns)
+        public T[,] CreateGrid<T>()
         {
             worldSize = new GridWorldSize();
-            T[,] gridElements = new T[rows,columns];
-            
-            extents = element.GetComponent<SpriteRenderer>().sprite.bounds.extents;
-            size = element.GetComponent<SpriteRenderer>().sprite.bounds.size;
+            T[,] gridElements = new T[gridRows,gridColumns];
 
-            float xPosition = GetStartPosition(rows, extents.x, LEFT);
-            float yPosition = GetStartPosition(columns, extents.y, TOP);
+            //extents = element.GetComponent<SpriteRenderer>().sprite.bounds.extents;
+            //size = element.GetComponent<SpriteRenderer>().sprite.bounds.size;
+
+            size = element.transform.localScale;
+
+            float xPosition = GetStartPosition(gridRows, size.x / 2f, LEFT);
+            float yPosition = GetStartPosition(gridColumns, size.y / 2f, TOP);
 
             worldSize.SetXPosition(xPosition);
             worldSize.SetYPosition(yPosition);
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < gridRows; i++)
             {
                 float y = yPosition - (i * size.y);
                 worldSize.SetYPosition(y);
 
-                for (int j = 0; j < columns; j++)
+                for (int j = 0; j < gridColumns; j++)
                 {
-                    float x = xPosition + (j * size.x);
+                    float x = xPosition - (j * size.x);
                     worldSize.SetXPosition(x);
                     gridElements[i, j] = CreateElementAt<T>(x, y);
                 }

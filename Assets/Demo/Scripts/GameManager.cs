@@ -10,6 +10,6 @@ public class GameManager : MonoBehaviour
 
     public void Awake()
     {
-        gridCreator.CreateGrid<Tile>(6, 6);
+        gridCreator.CreateGrid<Tile>();
     }
 }
