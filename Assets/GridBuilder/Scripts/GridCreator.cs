@@ -6,18 +6,15 @@ namespace Grid
 {
     public class GridCreator : MonoBehaviour
     {
-        private const int LEFT = 1;
-        private const int TOP = 1;
-
-        public static UnityGridWorldEvent GridCreated = new UnityGridWorldEvent();
+        public static UnityGridWorldEvent OnGridCreated = new UnityGridWorldEvent();
 
         [SerializeField] private GameObject element;
         [SerializeField] private int gridRows;
         [SerializeField] private int gridColumns;
+        [SerializeField] private Vector3 padding = new Vector3(0f, 0f, 0f);
 
         public GridWorldSize worldSize;
 
-        //private Vector3 extents;
         private Vector3 size;
 
         public T[,] CreateGrid<T>()
@@ -25,32 +22,55 @@ namespace Grid
             worldSize = new GridWorldSize();
             T[,] gridElements = new T[gridRows,gridColumns];
 
-            //extents = element.GetComponent<SpriteRenderer>().sprite.bounds.extents;
-            //size = element.GetComponent<SpriteRenderer>().sprite.bounds.size;
-
             size = element.transform.localScale;
 
-            float xPosition = GetStartPosition(gridRows, size.x / 2f, LEFT);
-            float yPosition = GetStartPosition(gridColumns, size.y / 2f, TOP);
+            Vector2 startPosition = GetPosition();
 
-            worldSize.SetXPosition(xPosition);
-            worldSize.SetYPosition(yPosition);
+            worldSize.SetXPosition(startPosition.x);
+            worldSize.SetYPosition(startPosition.y);
 
-            for (int i = 0; i < gridRows; i++)
+            for (int row = 0; row < gridRows; row++)
             {
-                float y = yPosition - (i * size.y);
+                float y = startPosition.y - ((row * (size.y + padding.y)));
                 worldSize.SetYPosition(y);
 
-                for (int j = 0; j < gridColumns; j++)
+                for (int column = 0; column < gridColumns; column++)
                 {
-                    float x = xPosition - (j * size.x);
+                    float x = startPosition.x - ((column * (size.x + padding.x)));
                     worldSize.SetXPosition(x);
-                    gridElements[i, j] = CreateElementAt<T>(x, y);
+                    gridElements[row, column] = CreateElementAt<T>(x, y);
                 }
             }
 
-            GridCreated.Invoke(worldSize);
+            OnGridCreated.Invoke(worldSize);
             return gridElements;
+        }
+
+        private Vector2 GetPosition()
+        {
+            return new Vector2
+            {
+                x = CalculateStartPosition(gridRows, size.x / 2f, padding.x, WorldSide.LEFT),
+                y = CalculateStartPosition(gridColumns, size.y / 2f, padding.y, WorldSide.TOP)
+            };
+        }
+
+        
+        private float CalculateStartPosition(int totalElements, float extentSize,float padding, WorldSide side)
+        {
+            float startPosition = 0;
+
+            int elements = (int) Math.Ceiling(totalElements / 2f);
+
+            float halfExtendsCount = totalElements % 2 + 1;
+            startPosition += halfExtendsCount * extentSize;
+            startPosition += halfExtendsCount * (padding / 2);
+
+            float fullExtentsCount = elements - halfExtendsCount;
+            startPosition += fullExtentsCount * (extentSize * 2);
+            startPosition += fullExtentsCount * padding;
+
+            return startPosition * (int)side;
         }
 
         private T CreateElementAt<T>(float x, float y)
@@ -60,25 +80,12 @@ namespace Grid
             return go.GetComponent<T>();
         }
 
-        private float GetStartPosition(int totalElements, float extent, int side)
-        {
-            float result = 0;
-
-            int elements = (int) Math.Ceiling(totalElements / 2f);
-
-            float halfExtends = totalElements % 2 + 1;
-            result += halfExtends * extent;
-
-            float fullExtents = elements - halfExtends;
-            result += fullExtents * (extent * 2);
-
-            Debug.Log($"Position X: {(result)} - Half elements: {elements}");
-            return result * side;
-        }
 
         public class UnityGridWorldEvent : UnityEvent<GridWorldSize>
         {
 
         }
     }
+
+    
 }

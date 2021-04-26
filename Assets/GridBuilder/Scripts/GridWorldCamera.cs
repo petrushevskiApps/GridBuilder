@@ -8,13 +8,13 @@ namespace Grid
 
         private void Awake()
         {
-            GridCreator.GridCreated.AddListener(OnGridCreated);
+            GridCreator.OnGridCreated.AddListener(OnGridCreated);
             gridCamera = GetComponent<Camera>();
         }
 
         private void OnDestroy()
         {
-            GridCreator.GridCreated.RemoveListener(OnGridCreated);
+            GridCreator.OnGridCreated.RemoveListener(OnGridCreated);
         }
 
         private void OnGridCreated(GridWorldSize worldSize)
