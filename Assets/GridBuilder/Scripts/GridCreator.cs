@@ -11,6 +11,8 @@ namespace Grid
         [SerializeField] private GameObject element;
         [SerializeField] private int gridRows;
         [SerializeField] private int gridColumns;
+        [SerializeField] private int gridDepth;
+
         [SerializeField] private Vector3 padding = new Vector3(0f, 0f, 0f);
 
         public GridWorldSize worldSize;
@@ -24,34 +26,43 @@ namespace Grid
 
             size = element.transform.localScale;
 
-            Vector2 startPosition = GetPosition();
+            Vector3 startPosition = GetPosition();
 
             worldSize.SetXPosition(startPosition.x);
             worldSize.SetYPosition(startPosition.y);
+            worldSize.SetZPosition(startPosition.z);
 
-            for (int row = 0; row < gridRows; row++)
+            for (int depth = 0; depth < gridDepth; depth++)
             {
-                float y = startPosition.y - ((row * (size.y + padding.y)));
-                worldSize.SetYPosition(y);
+                float z = startPosition.z - (depth * (size.z + padding.z));
+                worldSize.SetZPosition(z);
 
-                for (int column = 0; column < gridColumns; column++)
+                for (int row = 0; row < gridRows; row++)
                 {
-                    float x = startPosition.x - ((column * (size.x + padding.x)));
-                    worldSize.SetXPosition(x);
-                    gridElements[row, column] = CreateElementAt<T>(x, y);
+                    float y = startPosition.y - ((row * (size.y + padding.y)));
+                    worldSize.SetYPosition(y);
+
+                    for (int column = 0; column < gridColumns; column++)
+                    {
+                        float x = startPosition.x - ((column * (size.x + padding.x)));
+                        worldSize.SetXPosition(x);
+                        gridElements[row, column] = CreateElementAt<T>(x, y, z);
+                    }
                 }
             }
+            
 
             OnGridCreated.Invoke(worldSize);
             return gridElements;
         }
 
-        private Vector2 GetPosition()
+        private Vector3 GetPosition()
         {
-            return new Vector2
+            return new Vector3
             {
-                x = CalculateStartPosition(gridRows, size.x / 2f, padding.x, WorldSide.LEFT),
-                y = CalculateStartPosition(gridColumns, size.y / 2f, padding.y, WorldSide.TOP)
+                x = CalculateStartPosition(gridColumns, size.x / 2f, padding.x, WorldSide.LEFT),
+                y = CalculateStartPosition(gridRows, size.y / 2f, padding.y, WorldSide.TOP),
+                z = CalculateStartPosition(gridDepth, size.z / 2f, padding.z, WorldSide.FRONT)
             };
         }
 
@@ -70,12 +81,13 @@ namespace Grid
             startPosition += fullExtentsCount * (extentSize * 2);
             startPosition += fullExtentsCount * padding;
 
-            return startPosition * (int)side;
+            float pos = startPosition * (int)side;
+            return pos;
         }
 
-        private T CreateElementAt<T>(float x, float y)
+        private T CreateElementAt<T>(float x, float y, float z)
         {
-            Vector3 position = new Vector3(x, y, 0);
+            Vector3 position = new Vector3(x, y, z);
             GameObject go = Instantiate(element, position, Quaternion.identity, transform);
             return go.GetComponent<T>();
         }
