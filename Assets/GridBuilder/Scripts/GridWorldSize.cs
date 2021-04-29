@@ -23,19 +23,25 @@ namespace Grid
             return new Vector3(x, y, z);
         }
 
-        public void SetXPosition(float value)
+        public void SetWorldSize(Vector3 size)
+        {
+            SetWidth(size.x);
+            SetHeight(size.y);
+            SetDepth(size.z);
+        }
+        public void SetWidth(float value)
         {
             if (value < LowXPosition) LowXPosition = value;
             if (value > HighXPosition) HighXPosition = value;
         }
 
-        public void SetYPosition(float value)
+        public void SetHeight(float value)
         {
             if (value < LowYPosition) LowYPosition = value;
             if (value > HighYPosition) HighYPosition = value;
         }
         
-        public void SetZPosition(float value)
+        public void SetDepth(float value)
         {
             if (value < LowZPosition) LowZPosition = value;
             if (value > HighZPosition) HighZPosition = value;

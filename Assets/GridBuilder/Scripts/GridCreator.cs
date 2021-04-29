@@ -13,40 +13,68 @@ namespace Grid
         [SerializeField] private int gridColumns;
         [SerializeField] private int gridDepth;
 
-        [SerializeField] private Vector3 padding = new Vector3(0f, 0f, 0f);
+        [SerializeField] private Vector3 gridPadding = new Vector3(0f, 0f, 0f);
 
         public GridWorldSize worldSize;
 
         private Vector3 size;
+        
+        private GameObject[,,] gridElements;
+        private ISpawner spawner;
 
-        public T[,] CreateGrid<T>()
+        public GridCreator SetSpawner(ISpawner spawner)
+        {
+            this.spawner = spawner;
+            spawner.SetElement(element)
+                    .SetNaming("tile", "_", 0, NamingSort.INCREMENTAL)
+                    .SetParent(this.gameObject.transform);
+
+            return this;
+        }
+
+        public GridCreator SetSize(int rows, int columns, int depth)
+        {
+            gridRows = rows;
+            gridColumns = columns;
+            gridDepth = depth;
+
+            return this;
+        }
+
+        public GridCreator SetPadding(Vector3 girdPadding)
+        {
+            this.gridPadding = girdPadding;
+
+            return this;
+        }
+
+        public GameObject[,,] CreateGrid()
         {
             worldSize = new GridWorldSize();
-            T[,] gridElements = new T[gridRows,gridColumns];
+
+            gridElements = new GameObject[gridRows, gridColumns, gridDepth];
 
             size = element.transform.localScale;
 
             Vector3 startPosition = GetPosition();
 
-            worldSize.SetXPosition(startPosition.x);
-            worldSize.SetYPosition(startPosition.y);
-            worldSize.SetZPosition(startPosition.z);
+            worldSize.SetWorldSize(startPosition);
 
             for (int depth = 0; depth < gridDepth; depth++)
             {
-                float z = startPosition.z - (depth * (size.z + padding.z));
-                worldSize.SetZPosition(z);
+                float z = startPosition.z - (depth * (size.z + gridPadding.z));
+                worldSize.SetDepth(z);
 
                 for (int row = 0; row < gridRows; row++)
                 {
-                    float y = startPosition.y - ((row * (size.y + padding.y)));
-                    worldSize.SetYPosition(y);
+                    float y = startPosition.y - ((row * (size.y + gridPadding.y)));
+                    worldSize.SetHeight(y);
 
                     for (int column = 0; column < gridColumns; column++)
                     {
-                        float x = startPosition.x - ((column * (size.x + padding.x)));
-                        worldSize.SetXPosition(x);
-                        gridElements[row, column] = CreateElementAt<T>(x, y, z);
+                        float x = startPosition.x - ((column * (size.x + gridPadding.x)));
+                        worldSize.SetWidth(x);
+                        gridElements[row, column, depth] = spawner.SpawnElementAt(new Vector3(x,y,z));
                     }
                 }
             }
@@ -60,9 +88,9 @@ namespace Grid
         {
             return new Vector3
             {
-                x = CalculateStartPosition(gridColumns, size.x / 2f, padding.x, WorldSide.LEFT),
-                y = CalculateStartPosition(gridRows, size.y / 2f, padding.y, WorldSide.TOP),
-                z = CalculateStartPosition(gridDepth, size.z / 2f, padding.z, WorldSide.FRONT)
+                x = CalculateStartPosition(gridColumns, size.x / 2f, gridPadding.x, WorldSide.LEFT),
+                y = CalculateStartPosition(gridRows, size.y / 2f, gridPadding.y, WorldSide.TOP),
+                z = CalculateStartPosition(gridDepth, size.z / 2f, gridPadding.z, WorldSide.FRONT)
             };
         }
 
@@ -81,15 +109,7 @@ namespace Grid
             startPosition += fullExtentsCount * (extentSize * 2);
             startPosition += fullExtentsCount * padding;
 
-            float pos = startPosition * (int)side;
-            return pos;
-        }
-
-        private T CreateElementAt<T>(float x, float y, float z)
-        {
-            Vector3 position = new Vector3(x, y, z);
-            GameObject go = Instantiate(element, position, Quaternion.identity, transform);
-            return go.GetComponent<T>();
+            return startPosition * (int)side;
         }
 
 

@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     public void Awake()
     {
-        gridCreator.CreateGrid<Tile>();
+        gridCreator.SetSpawner(new SimpleSpawner())
+                    .SetPadding(new Vector3(0.2f, 0.2f, 0.2f))
+                    .CreateGrid();
     }
 }
