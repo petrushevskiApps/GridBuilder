@@ -8,31 +8,41 @@ namespace Grid
     {
         public static UnityGridWorldEvent OnGridCreated = new UnityGridWorldEvent();
 
-        [SerializeField] private GameObject element;
-        [SerializeField] private int gridRows;
-        [SerializeField] private int gridColumns;
-        [SerializeField] private int gridDepth;
+        [SerializeField] private GridData gridData;
 
-        [SerializeField] private Vector3 gridPadding = new Vector3(0f, 0f, 0f);
+        private Vector3 elementSize;
+        private int gridRows;
+        private int gridColumns;
+        private int gridDepth;
+        private Vector3 elementPadding = new Vector3(0f, 0f, 0f);
 
         public GridWorldSize worldSize;
 
-        private Vector3 size;
-        
-        private GameObject[,,] gridElements;
-        private ISpawner spawner;
+        private Vector3[,,] gridPositions;
 
-        public GridCreator SetSpawner(ISpawner spawner)
+        private void Awake()
         {
-            this.spawner = spawner;
-            spawner.SetElement(element)
-                    .SetNaming("tile", "_", 0, NamingSort.INCREMENTAL)
-                    .SetParent(this.gameObject.transform);
+            SetGridData(gridData);
+        }
+
+        public GridCreator SetGridData(GridData data)
+        {
+            gridRows = data.GridDimension.Rows;
+            gridColumns = data.GridDimension.Columns;
+            gridDepth = data.GridDimension.Depth;
+            elementSize = data.ElementSize;
+            elementPadding = data.ElementPadding;
 
             return this;
         }
 
-        public GridCreator SetSize(int rows, int columns, int depth)
+        public GridCreator SetElementSize(Vector3 elementSize)
+        {
+            this.elementSize = elementSize;
+            return this;
+        }
+
+        public GridCreator SetDimensions(int rows, int columns, int depth)
         {
             gridRows = rows;
             gridColumns = columns;
@@ -43,18 +53,16 @@ namespace Grid
 
         public GridCreator SetPadding(Vector3 girdPadding)
         {
-            this.gridPadding = girdPadding;
+            this.elementPadding = girdPadding;
 
             return this;
         }
 
-        public GameObject[,,] CreateGrid()
+        public Vector3[,,] CreateGrid()
         {
             worldSize = new GridWorldSize();
 
-            gridElements = new GameObject[gridRows, gridColumns, gridDepth];
-
-            size = element.transform.localScale;
+            gridPositions = new Vector3[gridRows, gridColumns, gridDepth];
 
             Vector3 startPosition = GetPosition();
 
@@ -62,39 +70,39 @@ namespace Grid
 
             for (int depth = 0; depth < gridDepth; depth++)
             {
-                float z = startPosition.z - (depth * (size.z + gridPadding.z));
+                float z = startPosition.z - (depth * (elementSize.z + elementPadding.z));
                 worldSize.SetDepth(z);
 
                 for (int row = 0; row < gridRows; row++)
                 {
-                    float y = startPosition.y - ((row * (size.y + gridPadding.y)));
+                    float y = startPosition.y - ((row * (elementSize.y + elementPadding.y)));
                     worldSize.SetHeight(y);
 
                     for (int column = 0; column < gridColumns; column++)
                     {
-                        float x = startPosition.x - ((column * (size.x + gridPadding.x)));
+                        float x = startPosition.x - ((column * (elementSize.x + elementPadding.x)));
                         worldSize.SetWidth(x);
-                        gridElements[row, column, depth] = spawner.SpawnElementAt(new Vector3(x,y,z));
+                        gridPositions[row, column, depth] = new Vector3(x,y,z);
                     }
                 }
             }
             
 
             OnGridCreated.Invoke(worldSize);
-            return gridElements;
+            return gridPositions;
         }
 
         private Vector3 GetPosition()
         {
             return new Vector3
             {
-                x = CalculateStartPosition(gridColumns, size.x / 2f, gridPadding.x, WorldSide.LEFT),
-                y = CalculateStartPosition(gridRows, size.y / 2f, gridPadding.y, WorldSide.TOP),
-                z = CalculateStartPosition(gridDepth, size.z / 2f, gridPadding.z, WorldSide.FRONT)
+                x = CalculateStartPosition(gridColumns, elementSize.x / 2f, elementPadding.x, WorldSide.LEFT),
+                y = CalculateStartPosition(gridRows, elementSize.y / 2f, elementPadding.y, WorldSide.TOP),
+                z = CalculateStartPosition(gridDepth, elementSize.z / 2f, elementPadding.z, WorldSide.FRONT)
             };
         }
 
-        
+
         private float CalculateStartPosition(int totalElements, float extentSize,float padding, WorldSide side)
         {
             float startPosition = 0;

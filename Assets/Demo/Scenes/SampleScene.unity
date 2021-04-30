@@ -448,6 +448,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCreator: {fileID: 1858690763}
+  elementPrefab: {fileID: 2229671308430428633, guid: f09dd27e2e119f748b629afc4ea1c91c, type: 3}
+  gridData: {fileID: 11400000, guid: f5a95b7a854bdc441821e8b8235c12d1, type: 2}
 --- !u!4 &1952571032
 Transform:
   m_ObjectHideFlags: 0
@@ -469,34 +471,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: element
-      value: 
-      objectReference: {fileID: 2229671308430428633, guid: f09dd27e2e119f748b629afc4ea1c91c, type: 3}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: gridRows
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: gridDepth
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: padding.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: padding.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: padding.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6420532862368208020, guid: 11a1828a963d80240a983290019e3890, type: 3}
-      propertyPath: gridColumns
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 8701573119208444842, guid: 11a1828a963d80240a983290019e3890, type: 3}
       propertyPath: m_Name
       value: GridBuilder

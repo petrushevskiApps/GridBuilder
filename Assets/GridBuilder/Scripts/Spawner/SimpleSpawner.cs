@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.MonoBehaviour;
 
 public class SimpleSpawner : ISpawner
 {
@@ -9,10 +6,7 @@ public class SimpleSpawner : ISpawner
     private GameObject element = new GameObject();
     private Quaternion rotation = Quaternion.identity;
 
-    private string baseName = "";
-    private string nameDelimeter = "_";
-    private int namingIndex = 0;
-    private NamingSort namingSort = NamingSort.NONE;
+    private INameGenerator nameGenerator;
 
     public ISpawner SetElement(GameObject element)
     {
@@ -31,40 +25,46 @@ public class SimpleSpawner : ISpawner
         return this;
     }
 
-    public ISpawner SetNaming(string baseName,string delimeter, int startIndex, NamingSort namingSort)
+    public ISpawner SetNaming(INameGenerator nameGenerator)
     {
-        this.baseName = baseName;
-        this.namingIndex = startIndex;
-        this.namingSort = namingSort;
-        this.nameDelimeter = delimeter;
+        this.nameGenerator = nameGenerator;
         return this;
+    }
+
+    public T[,,] SpawnElements<T>(Vector3[,,] positions)
+    {
+        T[,,] elements = new T[positions.GetLength(0), positions.GetLength(1), positions.GetLength(2)];
+        
+        
+        for (int k = 0; k < positions.GetLength(2); k++)
+        {
+            for (int j = 0; j < positions.GetLength(1); j++)
+            {
+                for (int i = 0; i < positions.GetLength(0); i++)
+                {
+                    elements[i,j,k] = SpawnElementAt<T>(positions[i,j,k]);
+                }
+            }
+        }
+
+        return elements;
     }
 
     public T SpawnElementAt<T>(Vector3 position)
     {
         GameObject go = Object.Instantiate(element, position, rotation, parent);
-        go.name = GetName();
+        go.name = nameGenerator.GetName();
         return go.GetComponent<T>();
     }
 
     public GameObject SpawnElementAt(Vector3 position)
     {
         GameObject go = Object.Instantiate(element, position, rotation, parent);
-        go.name = GetName();
+        go.name = nameGenerator.GetName();
         return go;
     }
 
-    private string GetName()
-    {
-        namingIndex += 1 * (int) namingSort;
-        return $"{baseName}{nameDelimeter}{namingIndex}";
-    }
+    
 
 }
 
-public enum NamingSort
-{
-    NONE = 0,
-    INCREMENTAL = 1,
-    DECREMENTAL = -1,
-}
