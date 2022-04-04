@@ -63,8 +63,5 @@ public class SimpleSpawner : ISpawner
         go.name = nameGenerator.GetName();
         return go;
     }
-
-    
-
 }
 

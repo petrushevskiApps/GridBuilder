@@ -47,14 +47,12 @@ namespace Grid
             gridRows = rows;
             gridColumns = columns;
             gridDepth = depth;
-
             return this;
         }
 
         public GridCreator SetPadding(Vector3 girdPadding)
         {
-            this.elementPadding = girdPadding;
-
+            elementPadding = girdPadding;
             return this;
         }
 
@@ -121,10 +119,7 @@ namespace Grid
         }
 
 
-        public class UnityGridWorldEvent : UnityEvent<GridWorldSize>
-        {
-
-        }
+        public class UnityGridWorldEvent : UnityEvent<GridWorldSize> { }
     }
 
     

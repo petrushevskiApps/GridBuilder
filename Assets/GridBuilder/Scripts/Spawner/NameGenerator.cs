@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class NameGenerator : MonoBehaviour, INameGenerator
+public class NameGenerator : INameGenerator
 {
     private string name = "";
     private string delimeter = "";

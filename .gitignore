@@ -59,3 +59,7 @@ sysinfo.txt
 crashlytics-build.properties
 
 .vsconfig
+.idea/.idea.GridBuilder/.idea/vcs.xml
+.idea/.idea.GridBuilder/.idea/indexLayout.xml
+.idea/.idea.GridBuilder/.idea/encodings.xml
+.idea/.idea.GridBuilder/.idea/.gitignore
