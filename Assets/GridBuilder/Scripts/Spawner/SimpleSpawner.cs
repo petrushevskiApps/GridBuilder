@@ -2,39 +2,38 @@ using UnityEngine;
 
 public class SimpleSpawner : ISpawner
 {
-    private Transform parent = null;
-    private GameObject element = new GameObject();
-    private Quaternion rotation = Quaternion.identity;
+    private Transform _parent = null;
+    private GameObject _element = new GameObject();
+    private Quaternion _rotation = Quaternion.identity;
 
-    private INameGenerator nameGenerator;
+    private INameGenerator _nameGenerator;
 
     public ISpawner SetElement(GameObject element)
     {
-        this.element = element;
+        _element = element;
         return this;
     }
 
     public ISpawner SetParent(Transform parent)
     {
-        this.parent = parent;
+        _parent = parent;
         return this;
     }
     public ISpawner SetRotation(Quaternion rotation)
     {
-        this.rotation = rotation;
+        _rotation = rotation;
         return this;
     }
 
     public ISpawner SetNaming(INameGenerator nameGenerator)
     {
-        this.nameGenerator = nameGenerator;
+        _nameGenerator = nameGenerator;
         return this;
     }
 
     public T[,,] SpawnElements<T>(Vector3[,,] positions)
     {
         T[,,] elements = new T[positions.GetLength(0), positions.GetLength(1), positions.GetLength(2)];
-        
         
         for (int k = 0; k < positions.GetLength(2); k++)
         {
@@ -52,15 +51,15 @@ public class SimpleSpawner : ISpawner
 
     public T SpawnElementAt<T>(Vector3 position)
     {
-        GameObject go = Object.Instantiate(element, position, rotation, parent);
-        go.name = nameGenerator.GetName();
+        GameObject go = Object.Instantiate(_element, position, _rotation, _parent);
+        go.name = _nameGenerator.GetName();
         return go.GetComponent<T>();
     }
 
     public GameObject SpawnElementAt(Vector3 position)
     {
-        GameObject go = Object.Instantiate(element, position, rotation, parent);
-        go.name = nameGenerator.GetName();
+        GameObject go = Object.Instantiate(_element, position, _rotation, _parent);
+        go.name = _nameGenerator.GetName();
         return go;
     }
 }

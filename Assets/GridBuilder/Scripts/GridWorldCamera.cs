@@ -4,24 +4,24 @@ namespace Grid
 {
     public class GridWorldCamera : MonoBehaviour
     {
-        private Camera gridCamera;
+        private Camera _gridCamera;
 
         private void Awake()
         {
-            GridCreator.OnGridCreated.AddListener(OnGridCreated);
-            gridCamera = GetComponent<Camera>();
+            GridBuilder.OnGridCreated.AddListener(OnGridCreated);
+            _gridCamera = GetComponent<Camera>();
         }
 
         private void OnDestroy()
         {
-            GridCreator.OnGridCreated.RemoveListener(OnGridCreated);
+            GridBuilder.OnGridCreated.RemoveListener(OnGridCreated);
         }
 
         private void OnGridCreated(GridWorldSize worldSize)
         {
-            if (gridCamera != null)
+            if (_gridCamera != null)
             {
-                gridCamera.orthographicSize = worldSize.GetWorldSize().x + 3.5f;
+                _gridCamera.orthographicSize = worldSize.GetWorldSize().x + 3.5f;
             }
         }
     }

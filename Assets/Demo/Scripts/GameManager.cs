@@ -2,14 +2,17 @@ using Grid;
 using UnityEngine;
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GridCreator gridCreator;
     [SerializeField] private GameObject elementPrefab;
     [SerializeField] private GridData gridData;
     public void Awake()
     {
         SimpleSpawner spawner = new SimpleSpawner();
+        IGridBuilder gridBuilder = new GridBuilder();
         
-        Vector3[,,] positions = gridCreator.SetElementSize(elementPrefab.transform.localScale).CreateGrid();
+        Vector3[,,] positions = gridBuilder
+            .SetElementSize(elementPrefab.transform.localScale)
+            .SetGridData(gridData)
+            .BuildGrid();
 
         INameGenerator nameGenerator = new NameGenerator()
             .SetBaseName("tile")
@@ -20,6 +23,6 @@ public class GameManager : MonoBehaviour
             .SetElement(elementPrefab)
             .SetNaming(nameGenerator)
             .SetParent(gameObject.transform)
-            .SpawnElements<Tile>(positions);
+            .SpawnElements<GameObject>(positions);
     }
 }

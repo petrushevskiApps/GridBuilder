@@ -1,26 +1,26 @@
 public class NameGenerator : INameGenerator
 {
-    private string name = "";
-    private string delimeter = "";
-    private int index = 0;
+    private string _name = "";
+    private string _delimeter = "";
+    private int _index = 0;
 
     private NamingSort sort = NamingSort.NONE;
 
     public NameGenerator SetBaseName(string baseName)
     {
-        name = baseName;
+        _name = baseName;
         return this;
     }
 
     public NameGenerator SetDelimeter(string nameDelimeter)
     {
-        delimeter = nameDelimeter;
+        _delimeter = nameDelimeter;
         return this;
     }
 
     public NameGenerator SetIndex(int namingIndex)
     {
-        index = namingIndex;
+        _index = namingIndex;
         return this;
     }
     public NameGenerator SetNameSort(NamingSort sortType)
@@ -36,15 +36,15 @@ public class NameGenerator : INameGenerator
             case NamingSort.NONE:
                 return "";
             case NamingSort.STATIC:
-                return index.ToString();
+                return _index.ToString();
             default:
-                index += 1 * (int)sort;
-                return index.ToString();
+                _index += 1 * (int)sort;
+                return _index.ToString();
         }
     }
     public string GetName()
     {
-        return $"{name}{delimeter}{GetSortedIndex()}";
+        return $"{_name}{_delimeter}{GetSortedIndex()}";
     }
 }
 public enum NamingSort
